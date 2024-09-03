@@ -134,7 +134,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           'Выйти из аккаунта',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Colors.red,
+                            color: redColor,
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
