@@ -3,6 +3,7 @@ import 'package:vers2/design/colors.dart';
 import 'package:vers2/pages/home_page.dart';
 import 'navigation.dart';
 import 'signup.dart';
+import 'new_password.dart'; // Импортируем экран восстановления пароля
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,6 +13,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _loginController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -22,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
         backgroundColor: Colors.white,
         body: Container(
           alignment: Alignment.center,
-          padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           height: MediaQuery.of(context).size.height,
           width: double.infinity,
           child: Column(
@@ -31,36 +35,32 @@ class _LoginPageState extends State<LoginPage> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          const Padding(
-                            padding: EdgeInsets.only(top: 120),
-                          ),
-                          Image.asset(
-                            'assets/img/logo.png',
-                            width: 100,
-                            height: 100,
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(bottom: 20),
-                          ),
-                          const Text("Вход",
-                              style: TextStyle(
-                                  fontSize: 35,
-                                  color: blackColor,
-                                  fontWeight: FontWeight.bold)),
-                          const Padding(
-                            padding: EdgeInsets.only(bottom: 30),
-                          )
-                        ],
+                      const Padding(
+                        padding: EdgeInsets.only(top: 120),
                       ),
-                      buildLoginTextField('Логин'),
+                      Image.asset(
+                        'assets/img/logo.png',
+                        width: 100,
+                        height: 100,
+                      ),
                       const Padding(
                         padding: EdgeInsets.only(bottom: 20),
                       ),
-                      buildTextField('Пароль'),
+                      const Text("Вход",
+                          style: TextStyle(
+                              fontSize: 35,
+                              color: blackColor,
+                              fontWeight: FontWeight.bold)),
                       const Padding(
                         padding: EdgeInsets.only(bottom: 30),
+                      ),
+                      buildLoginTextField('Логин', _loginController),
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 20),
+                      ),
+                      buildTextField('Пароль', _passwordController),
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 20),
                       ),
                       MaterialButton(
                         minWidth: 150,
@@ -73,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                         color: accentColor,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(500),
+                          borderRadius: BorderRadius.circular(50),
                         ),
                         child: const Text(
                           "Войти",
@@ -90,6 +90,24 @@ class _LoginPageState extends State<LoginPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                    const NewPasswordPage()), // Навигация к экрану восстановления пароля
+                              );
+                            },
+                            child: const Text(
+                              "Забыли пароль?",
+                              style: TextStyle(
+                                color: greyColor,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 20),
                           const Text(
                             "Нет аккаунта? ",
                             style: TextStyle(
@@ -98,20 +116,21 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const SignUpPage()),
-                                );
-                              },
-                              child: const Text(
-                                "Зарегистрироваться",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 18,
-                                ),
-                              )
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                    const SignUpPage()),
+                              );
+                            },
+                            child: const Text(
+                              "Зарегистрироваться",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -126,20 +145,19 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget buildLoginTextField(String hintText) {
+  Widget buildLoginTextField(String hintText, TextEditingController controller) {
     return Container(
       height: 60,
       constraints: const BoxConstraints(maxWidth: 400),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(
-          color: greyColor,
-        ),
+        border: Border.all(color: greyColor),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 20.0),
         child: TextField(
+          controller: controller,
           decoration: InputDecoration(
             border: InputBorder.none,
             hintText: hintText,
@@ -153,7 +171,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget buildTextField(String hintText) {
+  Widget buildTextField(String hintText, TextEditingController controller) {
     return Container(
       height: 60,
       constraints: const BoxConstraints(maxWidth: 400),
@@ -165,6 +183,7 @@ class _LoginPageState extends State<LoginPage> {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 20.0),
         child: TextField(
+          controller: controller,
           obscureText: true,
           decoration: InputDecoration(
             border: InputBorder.none,

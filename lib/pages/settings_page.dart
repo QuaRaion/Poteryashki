@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../design/colors.dart';
 import 'login_page.dart';
-import 'package:flutter_exit_app/flutter_exit_app.dart';
+import 'new_password.dart';
+import 'change_email_page.dart'; // Импортируйте экран смены почты
+import 'change_password_page.dart'; // Импортируйте экран смены пароля
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -25,9 +27,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 const Text(
                   "Настройки",
                   style: TextStyle(
-                      fontSize: 38,
-                      color: blackColor,
-                      fontWeight: FontWeight.w900,
+                    fontSize: 38,
+                    color: blackColor,
+                    fontWeight: FontWeight.w900,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -37,7 +39,14 @@ class _SettingsPageState extends State<SettingsPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ChangeEmailPage(), // Навигация к смене почты
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
@@ -69,9 +78,16 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ChangePasswordPage(), // Навигация к смене пароля
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white, // Устанавливаем цвет кнопки
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -107,15 +123,51 @@ class _SettingsPageState extends State<SettingsPage> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      exit(0);
-                      // Navigator.pushAndRemoveUntil(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => const LoginPage(),
-                      //   ),
-                      //       (Route<dynamic> route) => false,
-                      // );
-
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const NewPasswordPage(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      minimumSize: const Size(double.infinity, 80),
+                      elevation: 6,
+                      shadowColor: Colors.black.withOpacity(0.3),
+                    ),
+                    child: const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 10),
+                        Text(
+                          'Восстановить пароль',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: blackColor,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ),
+                            (Route<dynamic> route) => false, // Удалить все предыдущие страницы
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,

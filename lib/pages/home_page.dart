@@ -17,9 +17,9 @@ class HomePage extends StatelessWidget {
                 Text(
                   "Главная",
                   style: TextStyle(
-                      fontSize: 38,
-                      color: blackColor,
-                      fontWeight: FontWeight.w900,
+                      fontSize: 38,//ac
+                      //color: blackColor,
+                      //fontWeight: FontWeight.w900,
                   ),
                   textAlign: TextAlign.center,
                 ),
