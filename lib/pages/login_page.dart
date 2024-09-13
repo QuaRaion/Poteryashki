@@ -3,7 +3,7 @@ import 'package:vers2/design/colors.dart';
 import 'package:vers2/pages/home_page.dart';
 import 'navigation.dart';
 import 'signup.dart';
-import 'new_password.dart'; // Импортируем экран восстановления пароля
+import 'new_password.dart';
 import 'database.dart';
 import 'package:postgres/postgres.dart';
 
@@ -48,29 +48,52 @@ class _LoginPageState extends State<LoginPage> {
                     const Text("Вход",
                         style: TextStyle(
                             fontSize: 35,
-                            color: Colors.black,
+                            color: blackColor,
                             fontWeight: FontWeight.bold)),
                     const Padding(
                       padding: EdgeInsets.only(bottom: 30),
                     ),
-                    buildLoginTextField('Логин', _loginController),
+                    // Поле ввода для email
+                    buildLoginTextField('Логин', _emailController),
                     const Padding(
                       padding: EdgeInsets.only(bottom: 20),
                     ),
+                    // Поле ввода для пароля
                     buildTextField('Пароль', _passwordController),
                     const Padding(
-                      padding: EdgeInsets.only(bottom: 20),
+                      padding: EdgeInsets.only(bottom: 30),
                     ),
                     MaterialButton(
                       minWidth: 150,
                       height: 60,
-                      onPressed: () {
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const Navigation()),
-                              (Route<dynamic> route) => false,
-                        ); // Полностью очищаем стек навигации
+                      onPressed: () async {
+                        final conn = PostgreSQLConnection(
+                            '212.67.14.125',
+                            5432,
+                            'Poteryashki',
+                            username: 'postgres',
+                            password: 'mWy8*G*y'
+                        );
+                        final db = Database(conn);
+                        await db.open();
+
+                        String email = _emailController.text;
+                        String password = _passwordController.text;
+
+                        int isValidUser = await db.checkUserLogin(email, password);
+
+                        if (isValidUser == 0) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Navigation(),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Неверный логин или пароль'))
+                          );
+                        }
                       },
                       color: Colors.blue,
                       shape: RoundedRectangleBorder(
@@ -97,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                  const NewPasswordPage()), // Навигация к экрану восстановления пароля с заменой страницы
+                                  const NewPasswordPage()),
                             );
                           },
                           child: const Text(
