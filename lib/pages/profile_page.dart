@@ -8,10 +8,10 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(10, 50, 10, 0),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+          child: SingleChildScrollView( // Добавляем прокрутку
             child: Column(
               children: [
                 const Text(
@@ -56,44 +56,49 @@ class ProfilePage extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
-                Column(
-                  children: [
-                    _buildButton(
-                      context,
-                      icon: Icons.search,
-                      label: 'Потерянные вещи',
-                      onPressed: () {
-                        print('Нажата кнопка для перехода к потерянным вещам');
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    _buildButton(
-                      context,
-                      icon: Icons.playlist_add_check_outlined,
-                      label: 'Найденные вещи',
-                      onPressed: () {
-                        print('Нажата кнопка для перехода к найденным вещам');
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    _buildButton(
-                      context,
-                      icon: Icons.settings,
-                      label: 'Настройки',
-                      onPressed: () {
-                        print('Нажата кнопка открытия настроек');
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const SettingsPage()),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: 500,
+                  ),
+                  child: Column(
+                    children: [
+                      _buildButton(
+                        context,
+                        icon: Icons.search,
+                        label: 'Потерянные вещи',
+                        onPressed: () {
+                          print('Нажата кнопка для перехода к потерянным вещам');
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      _buildButton(
+                        context,
+                        icon: Icons.playlist_add_check_outlined,
+                        label: 'Найденные вещи',
+                        onPressed: () {
+                          print('Нажата кнопка для перехода к найденным вещам');
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      _buildButton(
+                        context,
+                        icon: Icons.settings,
+                        label: 'Настройки',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const SettingsPage()),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 20,)
+                    ],
+                  ),
+                )
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
