@@ -3,6 +3,7 @@ import 'package:vers2/design/colors.dart';
 import 'package:vers2/pages/home_page.dart';
 import 'navigation.dart';
 import 'signup.dart';
+import 'new_password.dart'; // Импортируем экран восстановления пароля
 import 'database.dart';
 import 'package:postgres/postgres.dart';
 
@@ -19,137 +20,125 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(primaryColor: accentColor),
-      home: Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.white,
-        body: Container(
-          alignment: Alignment.center,
-          padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
-          height: MediaQuery.of(context).size.height,
-          width: double.infinity,
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          const Padding(
-                            padding: EdgeInsets.only(top: 120),
-                          ),
-                          Image.asset(
-                            'assets/img/logo.png',
-                            width: 100,
-                            height: 100,
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(bottom: 20),
-                          ),
-                          const Text("Вход",
-                              style: TextStyle(
-                                  fontSize: 35,
-                                  color: blackColor,
-                                  fontWeight: FontWeight.bold)),
-                          const Padding(
-                            padding: EdgeInsets.only(bottom: 30),
-                          )
-                        ],
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
+      body: Container(
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        height: MediaQuery.of(context).size.height,
+        width: double.infinity,
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.only(top: 120),
+                    ),
+                    Image.asset(
+                      'assets/img/logo.png',
+                      width: 100,
+                      height: 100,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 20),
+                    ),
+                    const Text("Вход",
+                        style: TextStyle(
+                            fontSize: 35,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold)),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 30),
+                    ),
+                    buildLoginTextField('Логин', _loginController),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 20),
+                    ),
+                    buildTextField('Пароль', _passwordController),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 20),
+                    ),
+                    MaterialButton(
+                      minWidth: 150,
+                      height: 60,
+                      onPressed: () {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Navigation()),
+                              (Route<dynamic> route) => false,
+                        ); // Полностью очищаем стек навигации
+                      },
+                      color: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
                       ),
-                      // Поле ввода для email
-                      buildLoginTextField('Логин', _emailController),
-                      const Padding(
-                        padding: EdgeInsets.only(bottom: 20),
+                      child: const Text(
+                        "Войти",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30,
+                        ),
                       ),
-                      // Поле ввода для пароля
-                      buildTextField('Пароль', _passwordController),
-                      const Padding(
-                        padding: EdgeInsets.only(bottom: 30),
-                      ),
-                      MaterialButton(
-                        minWidth: 150,
-                        height: 60,
-                        onPressed: () async {
-                          final conn = PostgreSQLConnection(
-                              '212.67.14.125',
-                              5432,
-                              'Poteryashki',
-                              username: 'postgres',
-                              password: 'mWy8*G*y'
-                          );
-                          final db = Database(conn);
-                          await db.open();
-
-                          String email = _emailController.text;
-                          String password = _passwordController.text;
-
-                          int isValidUser = await db.checkUserLogin(email, password);
-
-                          if (isValidUser == 0) {
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 20),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        TextButton(
+                          onPressed: () {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const Navigation(),
-                              ),
+                                  builder: (context) =>
+                                  const NewPasswordPage()), // Навигация к экрану восстановления пароля с заменой страницы
                             );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Неверный логин или пароль'))
-                            );
-                          }
-                        },
-                        color: accentColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(500),
-                        ),
-                        child: const Text(
-                          "Войти",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 30,
-                          ),
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(bottom: 20),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          const Text(
-                            "Нет аккаунта? ",
+                          },
+                          child: const Text(
+                            "Забыли пароль?",
                             style: TextStyle(
-                              color: greyColor,
+                              color: Colors.grey,
                               fontSize: 18,
                             ),
                           ),
-                          GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const SignUpPage()),
-                                );
-                              },
-                              child: const Text(
-                                "Зарегистрироваться",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 18,
-                                ),
-                              )),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                        const SizedBox(width: 20),
+                        const Text(
+                          "Нет аккаунта? ",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 18,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const SignUpPage()),
+                            ); // Переход на страницу регистрации с заменой текущей страницы
+                          },
+                          child: const Text(
+                            "Зарегистрироваться",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              )
-            ],
-          ),
+              ),
+            )
+          ],
         ),
       ),
     );
