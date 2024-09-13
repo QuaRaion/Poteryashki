@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:postgres/postgres.dart';
 import 'package:vers2/design/colors.dart';
+import 'database.dart';
 import 'dart:core';
 
 class SignUpPage extends StatefulWidget {
@@ -60,7 +62,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   MaterialButton(
                     minWidth: 300,
                     height: 65,
-                    onPressed: () {
+                    onPressed: () async {
                       setState(() {
                         _isEmailValid = RegExp(
                           r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
@@ -72,6 +74,18 @@ class _SignUpPageState extends State<SignUpPage> {
                       });
 
                       if (_isEmailValid && _isPasswordMatch && !_isLoginEmpty && !_isPasswordEmpty && !_isConfirmPasswordEmpty) {
+                        final conn = PostgreSQLConnection(
+                            '212.67.14.125',
+                            5432,
+                            'Poteryashki',
+                            username: 'postgres',
+                            password: 'mWy8*G*y'
+                        );
+                        final db = Database(conn);
+                        await db.open();
+                        print('КОННЕКТ');
+                        db.registration(_emailController.text, _passwordController.text, _loginController.text);
+                        print('УСПЕХ!!');
                         Navigator.pop(context);}
                     },
                     color: accentColor,

@@ -4,7 +4,6 @@ import 'dart:async';
 class Database {
   final PostgreSQLConnection conn;
 
-
   Database(this.conn);
 
   Future<void> open() async {
@@ -18,7 +17,7 @@ class Database {
   Future<int> checkEmail(String email) async {
     final result = await conn.query(
       '''
-    SELECT COUNT(*) FROM User_reg
+    SELECT COUNT(*) FROM "User_reg"
     WHERE email = @email
     ''',
       substitutionValues: {
@@ -35,7 +34,7 @@ class Database {
 
   Future<void> registration(String email, String password, String username) async {
     await conn.query(
-        'INSERT INTO User_reg (email, password, username) VALUES (@email, @password, @username)',
+        'INSERT INTO "User_reg" (email, password, username) VALUES (@email, @password, @username)',
         substitutionValues: {
           'email': email,
           'password': password,

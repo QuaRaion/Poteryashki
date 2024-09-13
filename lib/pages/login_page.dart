@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:vers2/design/colors.dart';
-import 'package:vers2/pages/home_page.dart';
 import 'navigation.dart';
 import 'signup.dart';
 import 'new_password.dart';
@@ -8,7 +7,7 @@ import 'database.dart';
 import 'package:postgres/postgres.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+  const LoginPage({super.key});
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -22,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.white,
+      backgroundColor: whiteColor,
       body: Container(
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -48,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
                     const Text("Вход",
                         style: TextStyle(
                             fontSize: 35,
-                            color: blackColor,
+                            color: Colors.black,
                             fontWeight: FontWeight.bold)),
                     const Padding(
                       padding: EdgeInsets.only(bottom: 30),
@@ -67,6 +66,8 @@ class _LoginPageState extends State<LoginPage> {
                       minWidth: 150,
                       height: 60,
                       onPressed: () async {
+                        FocusScope.of(context).unfocus(); //закрытие клавиатуры, чтобы показывалась ошибка
+
                         final conn = PostgreSQLConnection(
                             '212.67.14.125',
                             5432,
@@ -91,49 +92,73 @@ class _LoginPageState extends State<LoginPage> {
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Неверный логин или пароль'))
+                            const SnackBar(
+                              content: Text(
+                                'Ошибка ввода почты или пароля',
+                                style: TextStyle(
+                                  color: whiteColor,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
                           );
                         }
                       },
-                      color: Colors.blue,
+
+                      color: accentColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: const Text(
                         "Войти",
                         style: TextStyle(
-                          color: Colors.white,
+                          color: whiteColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 30,
                         ),
                       ),
                     ),
                     const Padding(
-                      padding: EdgeInsets.only(bottom: 20),
+                      padding: EdgeInsets.only(bottom: 30),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushReplacement(
+                        const Text(
+                          "Нет аккаунта? ",
+                          style: TextStyle(
+                            color: greyColor,
+                            fontSize: 18,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                  const NewPasswordPage()),
+                                  builder: (context) => const SignUpPage()),
                             );
                           },
                           child: const Text(
-                            "Забыли пароль?",
+                            "Зарегистрироваться",
                             style: TextStyle(
-                              color: Colors.grey,
+                              fontWeight: FontWeight.w500,
                               fontSize: 18,
+                              color: blackColor,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 20),
+                      ],
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 10),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
                         const Text(
-                          "Нет аккаунта? ",
+                          "Забыли пароль? ",
                           style: TextStyle(
                             color: Colors.grey,
                             fontSize: 18,
@@ -144,18 +169,22 @@ class _LoginPageState extends State<LoginPage> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const SignUpPage()),
-                            ); // Переход на страницу регистрации с заменой текущей страницы
+                                  builder: (context) => const NewPasswordPage()),
+                            );
                           },
                           child: const Text(
-                            "Зарегистрироваться",
+                            "Восстановить",
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 18,
+                              color: blackColor,
                             ),
                           ),
                         ),
                       ],
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 50),
                     ),
                   ],
                 ),
