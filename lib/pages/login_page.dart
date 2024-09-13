@@ -3,15 +3,20 @@ import 'package:vers2/design/colors.dart';
 import 'package:vers2/pages/home_page.dart';
 import 'navigation.dart';
 import 'signup.dart';
+import 'database.dart';
+import 'package:postgres/postgres.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
 
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -54,22 +59,47 @@ class _LoginPageState extends State<LoginPage> {
                           )
                         ],
                       ),
-                      buildLoginTextField('Логин'),
+                      // Поле ввода для email
+                      buildLoginTextField('Логин', _emailController),
                       const Padding(
                         padding: EdgeInsets.only(bottom: 20),
                       ),
-                      buildTextField('Пароль'),
+                      // Поле ввода для пароля
+                      buildTextField('Пароль', _passwordController),
                       const Padding(
                         padding: EdgeInsets.only(bottom: 30),
                       ),
                       MaterialButton(
                         minWidth: 150,
                         height: 60,
-                        onPressed: () {
-                          Navigator.pushReplacement(
+                        onPressed: () async {
+                          final conn = PostgreSQLConnection(
+                              '212.67.14.125',
+                              5432,
+                              'Poteryashki',
+                              username: 'postgres',
+                              password: 'mWy8*G*y'
+                          );
+                          final db = Database(conn);
+                          await db.open();
+
+                          String email = _emailController.text;
+                          String password = _passwordController.text;
+
+                          int isValidUser = await db.checkUserLogin(email, password);
+
+                          if (isValidUser == 0) {
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const Navigation()));
+                                builder: (context) => const Navigation(),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Неверный логин или пароль'))
+                            );
+                          }
                         },
                         color: accentColor,
                         shape: RoundedRectangleBorder(
@@ -111,8 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                                   fontWeight: FontWeight.w500,
                                   fontSize: 18,
                                 ),
-                              )
-                          ),
+                              )),
                         ],
                       ),
                     ],
@@ -126,7 +155,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget buildLoginTextField(String hintText) {
+  Widget buildLoginTextField(String hintText, TextEditingController controller) {
     return Container(
       height: 60,
       constraints: const BoxConstraints(maxWidth: 400),
@@ -140,6 +169,7 @@ class _LoginPageState extends State<LoginPage> {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 20.0),
         child: TextField(
+          controller: controller,
           decoration: InputDecoration(
             border: InputBorder.none,
             hintText: hintText,
@@ -153,7 +183,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget buildTextField(String hintText) {
+  Widget buildTextField(String hintText, TextEditingController controller) {
     return Container(
       height: 60,
       constraints: const BoxConstraints(maxWidth: 400),
@@ -165,6 +195,7 @@ class _LoginPageState extends State<LoginPage> {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 20.0),
         child: TextField(
+          controller: controller,
           obscureText: true,
           decoration: InputDecoration(
             border: InputBorder.none,
