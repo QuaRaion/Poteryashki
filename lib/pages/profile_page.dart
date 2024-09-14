@@ -18,13 +18,21 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Хотите поменять фотографию?'),
+          title: const Text('Хотите поменять фотографию?', style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w500,
+            color: blackColor
+          ),),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('Нет'),
+              child: const Text('Нет', style: TextStyle(
+                fontSize: 20,
+                color: blackColor,
+                fontWeight: FontWeight.w400,
+              ),),
             ),
             TextButton(
               onPressed: () {
@@ -42,7 +50,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 );
               },
-              child: const Text('Да'),
+              child: const Text('Да', style: TextStyle(
+                fontSize: 20,
+                color: blackColor,
+                fontWeight: FontWeight.w400,
+              )
+              ),
             ),
           ],
         );

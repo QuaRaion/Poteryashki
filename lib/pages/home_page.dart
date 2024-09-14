@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../design/colors.dart';
 import 'database.dart';
+import 'things_card.dart';
 import 'package:postgres/postgres.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,27 +12,55 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Map<String, dynamic>> events = [
-    {'id': '1', 'title': 'Woman hand bag black', 'address': 'Москва, ул. Ленина', 'image': 'assets/img/img1.png'},
-    {'id': '2', 'title': 'AirPods 2', 'address': 'Санкт-Петербург, Невский пр.', 'image': 'assets/img/img2.png'},
-    {'id': '3', 'title': 'Большой текст на две строчки, который никуда не помещается', 'address': 'Новосибирск, ул. Красный пр.', 'image': 'assets/img/img3.png'},
-  ];
-
-  List<Map<String, dynamic>> filteredEvents = [];
+  late PostgreSQLConnection conn;
+  late Database db;
+  List<Map<String, dynamic>> things = [];
+  List<Map<String, dynamic>> filteredThing = [];
   final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    filteredEvents = events;
+    _initializeDatabase();
   }
 
+  // Инициализация базы данных и получение последних 20 записей
+  Future<void> _initializeDatabase() async {
+    // Настройка подключения
+    conn = PostgreSQLConnection(
+      '212.67.14.125',
+      5432,
+      'Poteryashki',
+      username: 'postgres',
+      password: 'mWy8*G*y',
+    );
+
+    db = Database(conn);
+    await db.open();
+    await _fetchDataFromDatabase();
+  }
+
+  Future<void> _fetchDataFromDatabase() async {
+    try {
+      List<Map<String, dynamic>> fetchedEvents = await db.getRows();
+
+      // Обновляем состояние
+      setState(() {
+        things = fetchedEvents;
+        filteredThing = fetchedEvents;
+      });
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
+  }
+
+  // Фильтрация событий по названию
   void _filterEvents(String query) {
     setState(() {
       if (query.isEmpty) {
-        filteredEvents = events;
+        filteredThing = things;
       } else {
-        filteredEvents = events.where((event) {
+        filteredThing = things.where((event) {
           return event['title']!.toLowerCase().contains(query.toLowerCase());
         }).toList();
       }
@@ -42,13 +71,6 @@ class _HomePageState extends State<HomePage> {
     _filterEvents(_searchController.text);
   }
 
-  void _deleteEvent(String eventId) {
-    setState(() {
-      events.removeWhere((event) => event['id'] == eventId);
-      filteredEvents.removeWhere((event) => event['id'] == eventId);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,6 +78,7 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.fromLTRB(10, 50, 10, 0),
         child: Column(
           children: <Widget>[
+            // Поле поиска
             Container(
               height: 60,
               constraints: const BoxConstraints(maxWidth: 400),
@@ -92,13 +115,13 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  int crossAxisCount = 2; // По умолчанию 2 столбца
+                  int crossAxisCount = 2;
 
                   if (constraints.maxWidth > 600) {
-                    crossAxisCount = 3; // На экранах шире 600px три столбца
+                    crossAxisCount = 3;
                   }
                   if (constraints.maxWidth > 900) {
-                    crossAxisCount = 4; // На экранах шире 900px четыре столбца
+                    crossAxisCount = 4;
                   }
 
                   return GridView.builder(
@@ -108,53 +131,69 @@ class _HomePageState extends State<HomePage> {
                       mainAxisSpacing: 10,
                       childAspectRatio: 0.75,
                     ),
-                    itemCount: filteredEvents.length,
+                    itemCount: filteredThing.length,
                     itemBuilder: (context, index) {
-                      var event = filteredEvents[index];
-                      return Card(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            ClipRRect(
-                              borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-                              child: Image.asset(
-                                event['image'],
-                                height: 160,
-                                width: double.infinity,
-                                fit: BoxFit.cover
-                              ),
+                      var thing = filteredThing[index];
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductDetailsPage(thing: thing),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                event['title'] ?? 'Без названия',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  height: 0,
-                                  color: blackColor,
+                          );
+                        },
+                        child: Card(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              ClipRRect(
+                                borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                                child: Image.network(
+                                  thing['image'] ?? 'assets/img/default.png',
+                                  height: 160,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.asset(
+                                      'assets/img/default.png',
+                                      height: 160,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text(
-                                event['address'] ?? 'Без адреса',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  height: 0,
-                                  color: greyColor,
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  thing['title'] ?? 'Без названия',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    height: 1.2,
+                                    color: blackColor,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text(
+                                  thing['address'] ?? 'Без адреса',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: greyColor,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
-
                     },
                   );
                 },

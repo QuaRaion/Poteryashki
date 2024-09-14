@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart';
 import 'package:postgres/postgres.dart';
+import 'database.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
