@@ -4,7 +4,7 @@ import 'package:postgres/postgres.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp( MaterialApp(
+  runApp( const MaterialApp(
     debugShowCheckedModeBanner: false,
     home: LoginPage(),
   ));

@@ -1,11 +1,10 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import '../design/colors.dart';
 import 'login_page.dart';
 import 'new_password.dart';
-import 'change_email_page.dart'; // Импортируйте экран смены почты
-import 'change_password_page.dart'; // Импортируйте экран смены пароля
+import 'change_email_page.dart';
+import 'change_password_page.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -34,7 +33,6 @@ class _SettingsPageState extends State<SettingsPage> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 30),
-                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -166,7 +164,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         MaterialPageRoute(
                           builder: (context) => LoginPage(),
                         ),
-                            (Route<dynamic> route) => false, // Удалить все предыдущие страницы
+                            (Route<dynamic> route) => false,
                       );
                     },
                     style: ElevatedButton.styleFrom(

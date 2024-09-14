@@ -82,6 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                         String password = _passwordController.text;
 
                         int isValidUser = await db.checkUserLogin(email, password);
+                        await db.close();
 
                         if (isValidUser == 0) {
                           Navigator.pushReplacement(
@@ -94,13 +95,16 @@ class _LoginPageState extends State<LoginPage> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(
-                                'Ошибка ввода почты или пароля',
+                                'Ошибка ввода почты или пароля!\n'
+                                    'Попробуйте еще раз',
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: whiteColor,
-                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
                                 ),
                               ),
-                              backgroundColor: Colors.red,
+                              backgroundColor: redColor,
                             ),
                           );
                         }
@@ -166,7 +170,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Navigator.pushReplacement(
+                            Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => const NewPasswordPage()),

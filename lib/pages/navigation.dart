@@ -56,7 +56,7 @@ class _NavigationState extends State<Navigation> {
                         ? Container(
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white,
+                        color: whiteColor,
                       ),
                       padding: const EdgeInsets.all(8.0),
                       child: Icon(
@@ -67,7 +67,7 @@ class _NavigationState extends State<Navigation> {
                     )
                         : Icon(
                       destination.icon,
-                      color: Colors.white,
+                      color: whiteColor,
                       size: 40,
                     ),
                     label: destination.title,
@@ -91,8 +91,8 @@ class Destination {
 }
 
 const List<Destination> allDestinations = <Destination>[
-  Destination(0, 'Home', Icons.home),
-  Destination(1, 'Add', Icons.playlist_add_rounded),
-  Destination(2, 'Chat', Icons.sms_rounded),
-  Destination(3, 'Profile', Icons.person),
+  Destination(0, '', Icons.home),
+  Destination(1, '', Icons.playlist_add_rounded),
+  Destination(2, '', Icons.sms_rounded),
+  Destination(3, '', Icons.person),
 ];

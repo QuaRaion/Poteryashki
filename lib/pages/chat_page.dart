@@ -95,15 +95,15 @@ class _ChatPageState extends State<ChatPage> {
                 itemBuilder: (context, index) {
                   var chat = filteredChats[index];
                   return Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    margin: const EdgeInsets.symmetric(vertical: 5),
                     decoration: BoxDecoration(
                       color: whiteColor,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: greyColor.withOpacity(0.3),
+                          color: greyColor.withOpacity(0.1),
                           spreadRadius: 3,
-                          blurRadius: 9,
+                          blurRadius: 4,
                         ),
                       ],
                     ),

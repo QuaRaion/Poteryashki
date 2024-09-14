@@ -8,22 +8,29 @@ class NewPasswordPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Восстановление пароля"),
-        backgroundColor: accentColor,
-      ),
+        backgroundColor: Colors.transparent,
+        title: const Text("Восстановление пароля",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: blackColor,
+          ),
+        ),
+        ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
-            const Padding(padding: EdgeInsets.only(top: 40)),
+            const Padding(padding: EdgeInsets.only(top: 14)),
             const Text(
               "Введите ваш email для восстановления пароля:",
               style: TextStyle(
-                fontSize: 18,
-                color: greyColor,
+                fontSize: 20,
+                color: blackColor,
+                fontWeight: FontWeight.w400
               ),
             ),
-            const Padding(padding: EdgeInsets.only(top: 20)),
+            const Padding(padding: EdgeInsets.only(top: 10)),
             Container(
               height: 60,
               constraints: const BoxConstraints(maxWidth: 400),
@@ -32,8 +39,8 @@ class NewPasswordPage extends StatelessWidget {
                 border: Border.all(color: greyColor),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 20.0),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 20.0),
                 child: TextField(
                   decoration: InputDecoration(
                     border: InputBorder.none,
@@ -46,9 +53,9 @@ class NewPasswordPage extends StatelessWidget {
                 ),
               ),
             ),
-            const Padding(padding: EdgeInsets.only(top: 20)),
+            const Padding(padding: EdgeInsets.only(top: 30)),
             MaterialButton(
-              minWidth: 300,
+              minWidth: 200,
               height: 65,
               onPressed: () {
                 // Логика восстановления пароля
@@ -60,26 +67,13 @@ class NewPasswordPage extends StatelessWidget {
               child: const Text(
                 "Отправить",
                 style: TextStyle(
-                  color: Colors.white,
+                  color: whiteColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 26,
                 ),
               ),
             ),
             const Padding(padding: EdgeInsets.only(top: 20)),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text(
-                "Назад к настройкам",
-                style: TextStyle(
-                  color: greyColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
           ],
         ),
       ),

@@ -65,7 +65,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     onPressed: () async {
                       setState(() {
                         _isEmailValid = RegExp(
-                          r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+                          r"^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$",
                         ).hasMatch(_emailController.text);
                         _isPasswordMatch = _passwordController.text == _confirmPasswordController.text;
                         _isLoginEmpty = _loginController.text.isEmpty;
@@ -73,7 +73,9 @@ class _SignUpPageState extends State<SignUpPage> {
                         _isConfirmPasswordEmpty = _confirmPasswordController.text.isEmpty;
                       });
 
-                      if (_isEmailValid && _isPasswordMatch && !_isLoginEmpty && !_isPasswordEmpty && !_isConfirmPasswordEmpty) {
+                      if (_isEmailValid && _isPasswordMatch &&
+                          !_isLoginEmpty && !_isPasswordEmpty &&
+                          !_isConfirmPasswordEmpty) {
                         final conn = PostgreSQLConnection(
                             '212.67.14.125',
                             5432,
@@ -83,10 +85,10 @@ class _SignUpPageState extends State<SignUpPage> {
                         );
                         final db = Database(conn);
                         await db.open();
-                        print('КОННЕКТ');
                         db.registration(_emailController.text, _passwordController.text, _loginController.text);
-                        print('УСПЕХ!!');
-                        Navigator.pop(context);}
+                        await db.close();
+                        Navigator.pop(context);
+                      }
                     },
                     color: accentColor,
                     shape: RoundedRectangleBorder(
