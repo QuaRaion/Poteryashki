@@ -1,9 +1,54 @@
 import 'package:flutter/material.dart';
 import '../design/colors.dart';
 import 'settings_page.dart';
+import 'avatar_selection_page.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
+
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  String _avatarPath = 'assets/avatars/ava1.png';
+
+  void _showChangeAvatarDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Хотите поменять фотографию?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Нет'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AvatarSelectionPage(
+                      onAvatarSelected: (String newAvatarPath) {
+                        setState(() {
+                          _avatarPath = newAvatarPath;
+                        });
+                      },
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Да'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +56,7 @@ class ProfilePage extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-          child: SingleChildScrollView( // Добавляем прокрутку
+          child: SingleChildScrollView(
             child: Column(
               children: [
                 const Text(
@@ -25,23 +70,26 @@ class ProfilePage extends StatelessWidget {
                 const SizedBox(height: 30),
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child: SizedBox(
-                    width: 150,
-                    height: 150,
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Container(
-                          decoration: const BoxDecoration(
-                            color: blackColor,
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: AssetImage('assets/img/avatar.jpg'),
+                  child: GestureDetector(
+                    onTap: _showChangeAvatarDialog,
+                    child: SizedBox(
+                      width: 150,
+                      height: 150,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: blackColor,
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: AssetImage(_avatarPath),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -109,31 +157,37 @@ class ProfilePage extends StatelessWidget {
         required String label,
         required VoidCallback onPressed,
       }) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: onPressed,
-        icon: Icon(
-          icon,
-          color: accentColor,
-          size: 35,
-        ),
-        label: Text(
-          label,
-          style: const TextStyle(
-            color: blackColor,
-            fontSize: 24,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double buttonWidth = constraints.maxWidth < 400 ? constraints.maxWidth : 400;
+
+        return SizedBox(
+          width: buttonWidth,
+          child: ElevatedButton.icon(
+            onPressed: onPressed,
+            icon: Icon(
+              icon,
+              color: accentColor,
+              size: 35,
+            ),
+            label: Text(
+              label,
+              style: const TextStyle(
+                color: blackColor,
+                fontSize: 24,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white.withOpacity(0.9),
+              padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 22),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
+              ),
+              alignment: Alignment.centerLeft,
+            ),
           ),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white.withOpacity(0.9),
-          padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 22),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-          ),
-          alignment: Alignment.centerLeft,
-        ),
-      ),
+        );
+      },
     );
   }
 }
