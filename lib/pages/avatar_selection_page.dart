@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '';
 
 class AvatarSelectionPage extends StatelessWidget {
   final void Function(String) onAvatarSelected;

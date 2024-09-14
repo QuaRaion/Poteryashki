@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 import 'dart:async';
 
@@ -43,9 +44,30 @@ class Database {
     );
   }
 
+  Future<int?> getUserIdByEmail(String email) async {
+    try {
+      final results = await conn.query(
+        'SELECT id FROM "User_reg" WHERE email = @email',
+        substitutionValues: {
+          'email': email,
+        },
+      );
+
+      if (results.isNotEmpty) {
+        return results.first[0] as int;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching user ID: $e');
+      return null;
+    }
+  }
+
+
   Future<int> checkUserLogin(String email, String password) async {
     final result = await conn.query(
-      'SELECT COUNT(*) FROM "User_reg" WHERE email = @email AND password = @password', // Используем @email и @password как параметры
+      'SELECT COUNT(*) FROM "User_reg" WHERE email = @email AND password = @password',
       substitutionValues: {
         'email': email,
         'password': password,
@@ -58,7 +80,7 @@ class Database {
     return 1;
   }
 
-  Future<List<Map<String, dynamic>>> getRows() async {
+  Future<List<Map<String, dynamic>>> getRowsLost() async {
     final results = await conn.query(
         'SELECT * FROM "Lost_things" WHERE status = 0 ORDER BY id'
     );
@@ -67,6 +89,25 @@ class Database {
       return {
         'title': row[2],
         'lost_date': row[3],
+        'time_1': row[4].toString(),
+        'time_2': row[5].toString(),
+        'description' : row[6],
+        'image' : row[7],
+        'address' : row[9],
+        'number' : row[10],
+      };
+    }).toList();
+  }
+
+  Future<List<Map<String, dynamic>>> getRowsFind() async {
+    final results = await conn.query(
+        'SELECT * FROM "Find_things" WHERE status = 0 ORDER BY id'
+    );
+
+    return results.map((row) {
+      return {
+        'title': row[2],
+        'find_date': row[3],
         'time_1': row[4].toString(),
         'time_2': row[5].toString(),
         'description' : row[6],
@@ -96,13 +137,30 @@ class Database {
     }).toList();
   }
 
-  Future<void> lostThingAdd(String userid, String title, DateTime lostDate, DateTime time1, DateTime time2, String description, String image, String address, String number ) async {
+  Future<void> lostThingAdd(String userid, String title, DateTime lostDate, String time1, String time2, String description, String image, String address, String number ) async {
     await conn.query(
         'INSERT INTO "Lost_things" (user_id, title, lost_date, time_1, time_2, description, address, number) VALUES (@user_id, @title, @lost_date, @time_1, @time_2, @description, @address, @number)',
         substitutionValues: {
           'user_id': userid,
           'title': title,
           'lost_date': lostDate,
+          'time_1': time1,
+          'time_2': time2,
+          'description': description,
+          // 'image': image,
+          'address': address,
+          'number': number,
+        } as Map<String, dynamic>
+    );
+  }
+
+  Future<void> findThingAdd(String userid, String title, DateTime findDate, String time1, String time2, String description, String image, String address, String number ) async {
+    await conn.query(
+        'INSERT INTO "Find_things" (user_id, title, find_date, time_1, time_2, description, address, number) VALUES (@user_id, @title, @find_date, @time_1, @time_2, @description, @address, @number)',
+        substitutionValues: {
+          'user_id': userid,
+          'title': title,
+          'find_date': findDate,
           'time_1': time1,
           'time_2': time2,
           'description': description,

@@ -17,6 +17,7 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> things = [];
   List<Map<String, dynamic>> filteredThing = [];
   final TextEditingController _searchController = TextEditingController();
+  bool _isLostSelected = true; // Флаг для переключателя
 
   @override
   void initState() {
@@ -24,9 +25,8 @@ class _HomePageState extends State<HomePage> {
     _initializeDatabase();
   }
 
-  // Инициализация базы данных и получение последних 20 записей
+  // Инициализация базы данных и получение записей
   Future<void> _initializeDatabase() async {
-    // Настройка подключения
     conn = PostgreSQLConnection(
       '212.67.14.125',
       5432,
@@ -40,11 +40,17 @@ class _HomePageState extends State<HomePage> {
     await _fetchDataFromDatabase();
   }
 
+  // Получение данных из базы данных в зависимости от состояния переключателя
   Future<void> _fetchDataFromDatabase() async {
     try {
-      List<Map<String, dynamic>> fetchedEvents = await db.getRows();
+      List<Map<String, dynamic>> fetchedEvents;
 
-      // Обновляем состояние
+      if (_isLostSelected) {
+        fetchedEvents = await db.getRowsLost();
+      } else {
+        fetchedEvents = await db.getRowsFind();
+      }
+
       setState(() {
         things = fetchedEvents;
         filteredThing = fetchedEvents;
@@ -110,6 +116,32 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
+            ),
+            const SizedBox(height: 10),
+            // Переключатель "потерянные" и "найденные"
+            ToggleButtons(
+              children: const <Widget>[
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text('Потерянные'),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text('Найденные'),
+                ),
+              ],
+              isSelected: [_isLostSelected, !_isLostSelected],
+              onPressed: (int index) {
+                setState(() {
+                  _isLostSelected = index == 0;
+                  _fetchDataFromDatabase(); // Обновляем данные при переключении
+                });
+              },
+              borderRadius: BorderRadius.circular(12),
+              borderColor: greyColor,
+              fillColor: accentColor,
+              selectedColor: whiteColor,
+              color: greyColor,
             ),
             const SizedBox(height: 10),
             Expanded(

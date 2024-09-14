@@ -13,7 +13,7 @@ class AddPage extends StatelessWidget {
         child: Column(
           children: [
             const Padding(
-              padding: EdgeInsets.only(top: 80), // Отступ сверху 40 пикселей
+              padding: EdgeInsets.only(top: 80),
               child: Text(
                 "Создать\nобъявление",
                 style: TextStyle(

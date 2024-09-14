@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:postgres/postgres.dart';
 import '../design/colors.dart';
+import 'database.dart';
 
 class LostPage extends StatefulWidget {
   const LostPage({super.key});
@@ -10,8 +12,17 @@ class LostPage extends StatefulWidget {
 }
 
 class _LostPageState extends State<LostPage> {
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _timeController = TextEditingController();
+  final TextEditingController _timeController1 = TextEditingController();
+  final TextEditingController _timeController2 = TextEditingController();
+  final TextEditingController _numberController = TextEditingController();
+
+  DateTime? _selectedDate;
+  TimeOfDay? _selectedTime1;
+  TimeOfDay? _selectedTime2;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -22,30 +33,86 @@ class _LostPageState extends State<LostPage> {
     );
     if (picked != null) {
       setState(() {
+        _selectedDate = picked;
         _dateController.text = DateFormat('yyyy-MM-dd').format(picked);
       });
     }
   }
 
-  Future<void> _selectTime(BuildContext context) async {
+  Future<void> _selectTime(BuildContext context, int timeIndex) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
     );
     if (picked != null) {
-      final now = DateTime.now();
-      final selectedTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        picked.hour,
-        picked.minute,
-      );
       setState(() {
-        _timeController.text = DateFormat('HH:mm').format(selectedTime);
+        if (timeIndex == 1) {
+          _selectedTime1 = picked;
+          _timeController1.text = picked.format(context); // Используйте TimeOfDay.format()
+        } else {
+          _selectedTime2 = picked;
+          _timeController2.text = picked.format(context); // Используйте TimeOfDay.format()
+        }
       });
     }
   }
+
+  Future<void> _saveData() async {
+    final title = _titleController.text;
+    final address = _addressController.text;
+    final description = _descriptionController.text;
+    final date = _selectedDate;
+    final time1 = _selectedTime1; // Убедитесь, что это TimeOfDay
+    final time2 = _selectedTime2; // Убедитесь, что это TimeOfDay
+    final number = _numberController.text;
+
+    if (title.isNotEmpty &&
+        address.isNotEmpty &&
+        description.isNotEmpty &&
+        date != null &&
+        time1 != null &&
+        time2 != null) {
+      // Преобразуем TimeOfDay в строку интервала
+      final time1Interval = '${time1.hour}:${time1.minute}:00';
+      final time2Interval = '${time2.hour}:${time2.minute}:00';
+
+      final conn = PostgreSQLConnection(
+        '212.67.14.125',
+        5432,
+        'Poteryashki',
+        username: 'postgres',
+        password: 'mWy8*G*y',
+      );
+      final db = Database(conn);
+      await db.open();
+      await db.lostThingAdd(
+        '1', // Замените на актуальный user_id
+        title,
+        date,
+        time1Interval, // Передаем строку интервала
+        time2Interval, // Передаем строку интервала
+        description,
+        '', // Замените на актуальный путь к изображению, если требуется
+        address,
+        number,
+      );
+      await db.close(); // Закрываем соединение
+
+      // Оповещаем пользователя об успешном сохранении
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Объявление сохранено')),
+      );
+
+      // Возвращаемся на предыдущую страницу
+      Navigator.pop(context);
+    } else {
+      // Оповещаем пользователя о том, что нужно заполнить все поля
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Пожалуйста, заполните все поля')),
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -72,12 +139,13 @@ class _LostPageState extends State<LostPage> {
 
             // Поле для ввода заголовка
             TextField(
-              decoration: InputDecoration(
+              controller: _titleController,
+              decoration: const InputDecoration(
                 hintText: 'Что потеряли?',
-                hintStyle: const TextStyle(color: Colors.grey),
+                hintStyle: TextStyle(color: Colors.grey),
                 filled: true,
                 fillColor: whiteColor,
-                border: const OutlineInputBorder(
+                border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(12)),
                   borderSide: BorderSide.none,
                 ),
@@ -87,12 +155,13 @@ class _LostPageState extends State<LostPage> {
 
             // Поле для ввода адреса
             TextField(
-              decoration: InputDecoration(
+              controller: _addressController,
+              decoration: const InputDecoration(
                 hintText: 'Адрес места потери',
-                hintStyle: const TextStyle(color: greyColor),
+                hintStyle: TextStyle(color: greyColor),
                 filled: true,
                 fillColor: whiteColor,
-                border: const OutlineInputBorder(
+                border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(12)),
                   borderSide: BorderSide.none,
                 ),
@@ -104,13 +173,13 @@ class _LostPageState extends State<LostPage> {
             TextField(
               controller: _dateController,
               readOnly: true, // Чтобы поле не вызывало клавиатуру
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Дата потери',
-                hintStyle: const TextStyle(color: Colors.grey),
-                prefixIcon: const Icon(Icons.calendar_today, color: Colors.grey),
+                hintStyle: TextStyle(color: Colors.grey),
+                prefixIcon: Icon(Icons.calendar_today, color: Colors.grey),
                 filled: true,
                 fillColor: whiteColor,
-                border: const OutlineInputBorder(
+                border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(12)),
                   borderSide: BorderSide.none,
                 ),
@@ -121,36 +190,74 @@ class _LostPageState extends State<LostPage> {
             ),
             const SizedBox(height: 10),
 
-            // Поле для ввода времени
+            // Поле для ввода времени начала
             TextField(
-              controller: _timeController,
+              controller: _timeController1,
               readOnly: true, // Чтобы поле не вызывало клавиатуру
-              decoration: InputDecoration(
-                hintText: 'Время потери',
-                hintStyle: const TextStyle(color: Colors.grey),
-                prefixIcon: const Icon(Icons.access_time, color: Colors.grey),
+              decoration: const InputDecoration(
+                hintText: 'Время потери от',
+                hintStyle: TextStyle(color: Colors.grey),
+                prefixIcon: Icon(Icons.access_time, color: Colors.grey),
                 filled: true,
                 fillColor: whiteColor,
-                border: const OutlineInputBorder(
+                border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(12)),
                   borderSide: BorderSide.none,
                 ),
               ),
               onTap: () {
-                _selectTime(context); // Открытие выбора времени
+                _selectTime(context, 1); // Открытие выбора времени для начала
+              },
+            ),
+            const SizedBox(height: 10),
+
+            // Поле для ввода времени окончания
+            TextField(
+              controller: _timeController2,
+              readOnly: true, // Чтобы поле не вызывало клавиатуру
+              decoration: const InputDecoration(
+                hintText: 'Время потери до',
+                hintStyle: TextStyle(color: Colors.grey),
+                prefixIcon: Icon(Icons.access_time, color: Colors.grey),
+                filled: true,
+                fillColor: whiteColor,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              onTap: () {
+                _selectTime(context, 2); // Открытие выбора времени для окончания
               },
             ),
             const SizedBox(height: 10),
 
             // Поле для описания
             TextField(
+              controller: _descriptionController,
               maxLines: 3,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Описание',
-                hintStyle: const TextStyle(color: Colors.grey),
+                hintStyle: TextStyle(color: Colors.grey),
                 filled: true,
                 fillColor: whiteColor,
-                border: const OutlineInputBorder(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            // Поле для ввода номера телефона
+            TextField(
+              controller: _numberController,
+              decoration: const InputDecoration(
+                hintText: 'Номер телефона',
+                hintStyle: TextStyle(color: Colors.grey),
+                filled: true,
+                fillColor: whiteColor,
+                border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(12)),
                   borderSide: BorderSide.none,
                 ),
@@ -161,9 +268,7 @@ class _LostPageState extends State<LostPage> {
             // Кнопка "Готово"
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  // Логика сохранения объявления
-                },
+                onPressed: _saveData,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: accentColor,
                   padding: const EdgeInsets.symmetric(
