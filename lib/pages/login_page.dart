@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vers2/design/colors.dart';
-import 'navigation.dart';
+import '../function/navigation.dart';
 import 'signup.dart';
-import 'new_password.dart';
+import '../function/new_password.dart';
 import 'database.dart';
 import 'package:postgres/postgres.dart';
 
@@ -72,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
                       minWidth: 150,
                       height: 60,
                       onPressed: () async {
-                        FocusScope.of(context).unfocus(); //закрытие клавиатуры, чтобы показывалась ошибка
+                        FocusScope.of(context).unfocus();
 
                         final conn = PostgreSQLConnection(
                             '212.67.14.125',
@@ -89,6 +89,12 @@ class _LoginPageState extends State<LoginPage> {
 
                         int isValidUser = await db.checkUserLogin(email, password);
 
+                        // Navigator.pushReplacement(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => const Navigation(),
+                        //   ),
+                        // );
                         if (isValidUser == 0) {
 
                           userID = await db.getUserIdByEmail(email);

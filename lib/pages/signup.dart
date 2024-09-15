@@ -1,6 +1,8 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 import 'package:vers2/design/colors.dart';
+import '../function/privacy_policy.dart';
 import 'database.dart';
 import 'dart:core';
 
@@ -15,14 +17,15 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _loginController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-
-  bool _isEmailValid = true;
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
+
+  bool _isEmailValid = true;
   bool _isPasswordMatch = true;
   bool _isPasswordEmpty = false;
   bool _isConfirmPasswordEmpty = false;
   bool _isLoginEmpty = false;
+  bool _isTermsAccepted = false;
 
   @override
   Widget build(BuildContext context) {
@@ -47,11 +50,14 @@ class _SignUpPageState extends State<SignUpPage> {
                     height: 100,
                   ),
                   const Padding(padding: EdgeInsets.only(bottom: 20)),
-                  const Text("Регистрация",
-                      style: TextStyle(
-                          fontSize: 35,
-                          color: blackColor,
-                          fontWeight: FontWeight.bold)),
+                  const Text(
+                    "Регистрация",
+                    style: TextStyle(
+                      fontSize: 35,
+                      color: blackColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const Padding(padding: EdgeInsets.only(bottom: 30)),
                   buildLoginTextField('Имя пользователя'),
                   const Padding(padding: EdgeInsets.only(bottom: 20)),
@@ -63,10 +69,54 @@ class _SignUpPageState extends State<SignUpPage> {
                   const Padding(padding: EdgeInsets.only(bottom: 20)),
                   buildTextField('Повторный пароль', obscureText: true, controller: _confirmPasswordController),
                   const Padding(padding: EdgeInsets.only(bottom: 30)),
-                  MaterialButton(
-                    minWidth: 300,
-                    height: 65,
-                    onPressed: () async {
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Checkbox(
+                        value: _isTermsAccepted,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isTermsAccepted = value ?? false;
+                          });
+                        },
+                      ),
+                      Flexible(
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              const TextSpan(
+                                text: "Ознакомлен с ",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: blackColor,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "политикой конфиденциальности",
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.blue, // Цвет текста ссылки
+                                  decoration: TextDecoration.underline,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => PrivacyPolicyPage()),
+                                    );
+                                  },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const Padding(padding: EdgeInsets.only(bottom: 20)),
+                  ElevatedButton(
+                    onPressed: _isTermsAccepted
+                        ? () async {
                       setState(() {
                         _isEmailValid = RegExp(
                           r"^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$",
@@ -77,36 +127,45 @@ class _SignUpPageState extends State<SignUpPage> {
                         _isConfirmPasswordEmpty = _confirmPasswordController.text.isEmpty;
                       });
 
-                      if (_isEmailValid && _isPasswordMatch &&
-                          !_isLoginEmpty && !_isPasswordEmpty &&
+                      if (_isEmailValid &&
+                          _isPasswordMatch &&
+                          !_isLoginEmpty &&
+                          !_isPasswordEmpty &&
                           !_isConfirmPasswordEmpty) {
                         final conn = PostgreSQLConnection(
-                            '212.67.14.125',
-                            5432,
-                            'Poteryashki',
-                            username: 'postgres',
-                            password: 'mWy8*G*y'
+                          '212.67.14.125',
+                          5432,
+                          'Poteryashki',
+                          username: 'postgres',
+                          password: 'mWy8*G*y',
                         );
                         final db = Database(conn);
                         await db.open();
-                        db.registration(_emailController.text, _passwordController.text, _loginController.text, _phoneController.text);
+                        db.registration(
+                          _emailController.text,
+                          _passwordController.text,
+                          _loginController.text,
+                          _phoneController.text,
+                        );
                         await db.close();
                         Navigator.pop(context);
                       }
-                    },
-                    color: accentColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
+                    }
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: accentColor,
+                      minimumSize: const Size(300, 65)
                     ),
                     child: const Text(
                       "Зарегистрироваться",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: whiteColor,
                         fontWeight: FontWeight.bold,
                         fontSize: 26,
                       ),
                     ),
                   ),
+
                   const Padding(padding: EdgeInsets.only(bottom: 20)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -147,9 +206,9 @@ class _SignUpPageState extends State<SignUpPage> {
       height: 60,
       constraints: const BoxConstraints(maxWidth: 400),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: whiteColor,
         border: Border.all(
-          color: _isLoginEmpty ? Colors.red : greyColor,
+          color: _isLoginEmpty ? redColor : greyColor,
         ),
         borderRadius: BorderRadius.circular(12),
       ),
@@ -175,9 +234,9 @@ class _SignUpPageState extends State<SignUpPage> {
       height: 60,
       constraints: const BoxConstraints(maxWidth: 400),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: whiteColor,
         border: Border.all(
-          color: _isEmailValid ? greyColor : Colors.red,
+          color: _isEmailValid ? greyColor : redColor,
         ),
         borderRadius: BorderRadius.circular(12),
       ),
@@ -210,10 +269,10 @@ class _SignUpPageState extends State<SignUpPage> {
       height: 60,
       constraints: const BoxConstraints(maxWidth: 400),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: whiteColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: (_isPasswordMatch && !_isPasswordEmpty && !_isConfirmPasswordEmpty) ? greyColor : Colors.red,
+          color: (_isPasswordMatch && !_isPasswordEmpty && !_isConfirmPasswordEmpty) ? greyColor : redColor,
         ),
       ),
       child: Padding(
@@ -248,9 +307,9 @@ class _SignUpPageState extends State<SignUpPage> {
       height: 60,
       constraints: const BoxConstraints(maxWidth: 400),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: whiteColor,
         border: Border.all(
-          color: greyColor,
+          color: (_phoneController.text.length == 10) ? greyColor : redColor,
         ),
         borderRadius: BorderRadius.circular(12),
       ),
@@ -258,7 +317,8 @@ class _SignUpPageState extends State<SignUpPage> {
         padding: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 20.0),
         child: TextField(
           controller: _phoneController,
-          keyboardType: TextInputType.phone, // Ожидаем ввод номера телефона
+          keyboardType: TextInputType.phone,
+          maxLength: 12,
           decoration: InputDecoration(
             border: InputBorder.none,
             hintText: hintText,
@@ -266,11 +326,24 @@ class _SignUpPageState extends State<SignUpPage> {
               color: greyColor,
               fontSize: 18,
             ),
+            counterText: '',
           ),
+          onChanged: (value) {
+            setState(() {
+              if (!_phoneController.text.startsWith('+7')) {
+                _phoneController.text = '+7${_phoneController.text}';
+                _phoneController.selection = TextSelection.fromPosition(
+                  TextPosition(offset: _phoneController.text.length),
+                );
+              }
+            });
+          },
         ),
       ),
     );
   }
+
+
 
 }
 

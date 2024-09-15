@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vers2/design/colors.dart';
 import 'package:vers2/pages/login_page.dart';
-import 'database.dart';
+import '../pages/database.dart';
 import 'package:postgres/postgres.dart';
 
 class AvatarSelectionPage extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../design/colors.dart';
 import 'settings_page.dart';
-import 'avatar_selection_page.dart';
+import '../function/avatar_selection_page.dart';
 import 'login_page.dart';
 
 
@@ -70,7 +70,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+          padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -196,7 +196,7 @@ class _ProfilePageState extends State<ProfilePage> {
               backgroundColor: Colors.white.withOpacity(0.9),
               padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 22),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
+                borderRadius: BorderRadius.circular(12),
               ),
               alignment: Alignment.centerLeft,
             ),

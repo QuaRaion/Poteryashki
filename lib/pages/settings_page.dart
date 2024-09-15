@@ -2,9 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../design/colors.dart';
 import 'login_page.dart';
-import 'new_password.dart';
-import 'change_email_page.dart';
-import 'change_password_page.dart';
+import '../function/new_password.dart';
+import '../function/change_email_page.dart';
+import '../function/change_password_page.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
