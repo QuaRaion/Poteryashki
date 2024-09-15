@@ -14,6 +14,8 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _loginController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+
   bool _isEmailValid = true;
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
@@ -55,6 +57,8 @@ class _SignUpPageState extends State<SignUpPage> {
                   const Padding(padding: EdgeInsets.only(bottom: 20)),
                   buildEmailTextField('Почта'),
                   const Padding(padding: EdgeInsets.only(bottom: 20)),
+                  buildPhoneTextField('Номер телефона'),
+                  const Padding(padding: EdgeInsets.only(bottom: 20)),
                   buildTextField('Пароль, не менее 6 символов', obscureText: true, controller: _passwordController),
                   const Padding(padding: EdgeInsets.only(bottom: 20)),
                   buildTextField('Повторный пароль', obscureText: true, controller: _confirmPasswordController),
@@ -85,7 +89,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         );
                         final db = Database(conn);
                         await db.open();
-                        db.registration(_emailController.text, _passwordController.text, _loginController.text);
+                        db.registration(_emailController.text, _passwordController.text, _loginController.text, _phoneController.text);
                         await db.close();
                         Navigator.pop(context);
                       }
@@ -238,4 +242,35 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   }
+
+  Widget buildPhoneTextField(String hintText) {
+    return Container(
+      height: 60,
+      constraints: const BoxConstraints(maxWidth: 400),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(
+          color: greyColor,
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 20.0),
+        child: TextField(
+          controller: _phoneController,
+          keyboardType: TextInputType.phone, // Ожидаем ввод номера телефона
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            hintText: hintText,
+            hintStyle: const TextStyle(
+              color: greyColor,
+              fontSize: 18,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
 }
+

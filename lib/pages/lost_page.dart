@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:postgres/postgres.dart';
 import '../design/colors.dart';
 import 'database.dart';
+import 'login_page.dart';
 
 class LostPage extends StatefulWidget {
   const LostPage({super.key});
@@ -18,7 +19,6 @@ class _LostPageState extends State<LostPage> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController1 = TextEditingController();
   final TextEditingController _timeController2 = TextEditingController();
-  final TextEditingController _numberController = TextEditingController();
 
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime1;
@@ -62,9 +62,8 @@ class _LostPageState extends State<LostPage> {
     final address = _addressController.text;
     final description = _descriptionController.text;
     final date = _selectedDate;
-    final time1 = _selectedTime1; // Убедитесь, что это TimeOfDay
-    final time2 = _selectedTime2; // Убедитесь, что это TimeOfDay
-    final number = _numberController.text;
+    final time1 = _selectedTime1;
+    final time2 = _selectedTime2;
 
     if (title.isNotEmpty &&
         address.isNotEmpty &&
@@ -72,7 +71,6 @@ class _LostPageState extends State<LostPage> {
         date != null &&
         time1 != null &&
         time2 != null) {
-      // Преобразуем TimeOfDay в строку интервала
       final time1Interval = '${time1.hour}:${time1.minute}:00';
       final time2Interval = '${time2.hour}:${time2.minute}:00';
 
@@ -86,17 +84,17 @@ class _LostPageState extends State<LostPage> {
       final db = Database(conn);
       await db.open();
       await db.lostThingAdd(
-        '1', // Замените на актуальный user_id
+        userID as int,
         title,
         date,
-        time1Interval, // Передаем строку интервала
-        time2Interval, // Передаем строку интервала
+        time1Interval,
+        time2Interval,
         description,
-        '', // Замените на актуальный путь к изображению, если требуется
+        '',
         address,
-        number,
+        number as String,
       );
-      await db.close(); // Закрываем соединение
+      await db.close();
 
       // Оповещаем пользователя об успешном сохранении
       ScaffoldMessenger.of(context).showSnackBar(
@@ -248,22 +246,6 @@ class _LostPageState extends State<LostPage> {
               ),
             ),
             const SizedBox(height: 10),
-
-            // Поле для ввода номера телефона
-            TextField(
-              controller: _numberController,
-              decoration: const InputDecoration(
-                hintText: 'Номер телефона',
-                hintStyle: TextStyle(color: Colors.grey),
-                filled: true,
-                fillColor: whiteColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-            const SizedBox(height: 30),
 
             // Кнопка "Готово"
             Center(

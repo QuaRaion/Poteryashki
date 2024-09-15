@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'home_page_lost.dart';
+import 'home_page.dart';
 import 'add_page.dart';
 import 'chat_page.dart';
 import 'profile_page.dart';

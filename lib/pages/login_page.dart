@@ -6,6 +6,12 @@ import 'new_password.dart';
 import 'database.dart';
 import 'package:postgres/postgres.dart';
 
+int? userID;
+String? number;
+String? userName;
+int? avatar;
+String? userEmail;
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -82,12 +88,14 @@ class _LoginPageState extends State<LoginPage> {
                         String password = _passwordController.text;
 
                         int isValidUser = await db.checkUserLogin(email, password);
-                        await db.close();
 
                         if (isValidUser == 0) {
 
-                          final UserID = await db.getUserIdByEmail(email);
-
+                          userID = await db.getUserIdByEmail(email);
+                          number = await db.getUserNumberByEmail(email);
+                          userName = await db.getUserNameByEmail(email);
+                          avatar = await db.getUserAvatarByEmail(email);
+                          userEmail = _emailController.text;
 
                           Navigator.pushReplacement(
                             context,
@@ -112,6 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           );
                         }
+                        await db.close();
                       },
 
                       color: accentColor,

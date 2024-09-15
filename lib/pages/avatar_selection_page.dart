@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:vers2/design/colors.dart';
+import 'package:vers2/pages/login_page.dart';
+import 'database.dart';
+import 'package:postgres/postgres.dart';
 
 class AvatarSelectionPage extends StatelessWidget {
   final void Function(String) onAvatarSelected;
@@ -33,8 +37,11 @@ class AvatarSelectionPage extends StatelessWidget {
         itemCount: avatarPaths.length,
         itemBuilder: (context, index) {
           final path = avatarPaths[index];
+
           return GestureDetector(
-            onTap: () {
+            onTap: () async {
+              await _updateAvatar(index);
+
               onAvatarSelected(path);
               Navigator.pop(context);
             },
@@ -45,12 +52,28 @@ class AvatarSelectionPage extends StatelessWidget {
                   image: AssetImage(path),
                 ),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey),
+                border: Border.all(color: greyColor),
               ),
             ),
           );
         },
       ),
     );
+  }
+
+  Future<void> _updateAvatar(int avatarIndex) async {
+    final conn = PostgreSQLConnection(
+      '212.67.14.125',
+      5432,
+      'Poteryashki',
+      username: 'postgres',
+      password: 'mWy8*G*y',
+    );
+
+    final db = Database(conn);
+
+    await db.open();
+    await db.changeAvatar(userEmail!, avatarIndex);
+    await db.close();
   }
 }

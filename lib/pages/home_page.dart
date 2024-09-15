@@ -40,7 +40,6 @@ class _HomePageState extends State<HomePage> {
     await _fetchDataFromDatabase();
   }
 
-  // Получение данных из базы данных в зависимости от состояния переключателя
   Future<void> _fetchDataFromDatabase() async {
     try {
       List<Map<String, dynamic>> fetchedEvents;
@@ -96,7 +95,7 @@ class _HomePageState extends State<HomePage> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 20.0),
+                padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 20.0),
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
@@ -120,21 +119,11 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 10),
             // Переключатель "потерянные" и "найденные"
             ToggleButtons(
-              children: const <Widget>[
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text('Потерянные'),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text('Найденные'),
-                ),
-              ],
               isSelected: [_isLostSelected, !_isLostSelected],
               onPressed: (int index) {
                 setState(() {
                   _isLostSelected = index == 0;
-                  _fetchDataFromDatabase(); // Обновляем данные при переключении
+                  _fetchDataFromDatabase();
                 });
               },
               borderRadius: BorderRadius.circular(12),
@@ -142,26 +131,41 @@ class _HomePageState extends State<HomePage> {
               fillColor: accentColor,
               selectedColor: whiteColor,
               color: greyColor,
+              children: const <Widget>[
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30.0),
+                  child: Text('Потерянные', style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,),
+                    ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30.0),
+                  child: Text('Найденные', style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  int crossAxisCount = 2;
+                  double maxCrossAxisExtent = 200;
 
                   if (constraints.maxWidth > 600) {
-                    crossAxisCount = 3;
+                    maxCrossAxisExtent = 300;
                   }
                   if (constraints.maxWidth > 900) {
-                    crossAxisCount = 4;
+                    maxCrossAxisExtent = 400;
                   }
 
                   return GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: 0.75,
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: maxCrossAxisExtent, // Максимальная ширина карточки
+                      crossAxisSpacing: 5,
+                      mainAxisSpacing: 5,
                     ),
                     itemCount: filteredThing.length,
                     itemBuilder: (context, index) {
@@ -175,63 +179,71 @@ class _HomePageState extends State<HomePage> {
                             ),
                           );
                         },
-                        child: Card(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              ClipRRect(
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-                                child: Image.network(
-                                  thing['image'] ?? 'assets/img/default.png',
-                                  height: 160,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Image.asset(
-                                      'assets/img/default.png',
-                                      height: 160,
-                                      width: double.infinity,
-                                      fit: BoxFit.cover,
-                                    );
-                                  },
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  thing['title'] ?? 'Без названия',
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
-                                    height: 1.2,
-                                    color: blackColor,
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            maxHeight: 300,
+                          ),
+                          child: Card(
+                            color: whiteColor,
+                            elevation: 0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                                  child: Image.network(
+                                    thing['image'] ?? 'assets/img/default.png',
+                                    height: 120, // Ограничиваем высоту изображения
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.asset(
+                                        'assets/img/default.png',
+                                        height: 120, // Ограничиваем высоту изображения по умолчанию
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Text(
-                                  thing['address'] ?? 'Без адреса',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: greyColor,
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    thing['title'] ?? 'Без названия',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700,
+                                      height: 1.2,
+                                      color: blackColor,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: Text(
+                                    thing['address'] ?? 'Без адреса',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: greyColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
+
                     },
                   );
                 },
               ),
             ),
-            const SizedBox(height: 10),
+
           ],
         ),
       ),

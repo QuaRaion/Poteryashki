@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../design/colors.dart';
 import 'settings_page.dart';
 import 'avatar_selection_page.dart';
+import 'login_page.dart';
+
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -11,7 +13,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String _avatarPath = 'assets/avatars/ava1.png';
+  String _avatarPath = 'assets/avatars/ava${avatar!+1}.png';
 
   void _showChangeAvatarDialog() {
     showDialog(
@@ -107,9 +109,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  "Николаева Елизавета Олеговна",
-                  style: TextStyle(
+                Text(
+                  '$userName',
+                  style: const TextStyle(
                     fontSize: 30,
                     color: blackColor,
                     fontWeight: FontWeight.w600,

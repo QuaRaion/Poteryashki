@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 import 'dart:async';
 
@@ -33,13 +32,14 @@ class Database {
     return 1; // все хорошо
   }
 
-  Future<void> registration(String email, String password, String username) async {
+  Future<void> registration(String email, String password, String username, String number) async {
     await conn.query(
-        'INSERT INTO "User_reg" (email, password, username) VALUES (@email, @password, @username)',
+        'INSERT INTO "User_reg" (email, password, username, number) VALUES (@email, @password, @username, @number)',
         substitutionValues: {
           'email': email,
           'password': password,
           'username': username,
+          'number': number,
         } as Map<String, dynamic>
     );
   }
@@ -64,6 +64,45 @@ class Database {
     }
   }
 
+  Future<String?> getUserNameByEmail(String email) async {
+    try {
+      final results = await conn.query(
+        'SELECT username FROM "User_reg" WHERE email = @email',
+        substitutionValues: {
+          'email': email,
+        },
+      );
+
+      if (results.isNotEmpty) {
+        return results.first[0];
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching user ID: $e');
+      return null;
+    }
+  }
+
+  Future<String?> getUserNumberByEmail(String email) async {
+    try {
+      final results = await conn.query(
+        'SELECT number FROM "User_reg" WHERE email = @email',
+        substitutionValues: {
+          'email': email,
+        },
+      );
+
+      if (results.isNotEmpty) {
+        return results.first[0];
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching user ID: $e');
+      return null;
+    }
+  }
 
   Future<int> checkUserLogin(String email, String password) async {
     final result = await conn.query(
@@ -137,7 +176,7 @@ class Database {
     }).toList();
   }
 
-  Future<void> lostThingAdd(String userid, String title, DateTime lostDate, String time1, String time2, String description, String image, String address, String number ) async {
+  Future<void> lostThingAdd(int userid, String title, DateTime lostDate, String time1, String time2, String description, String image, String address, String number ) async {
     await conn.query(
         'INSERT INTO "Lost_things" (user_id, title, lost_date, time_1, time_2, description, address, number) VALUES (@user_id, @title, @lost_date, @time_1, @time_2, @description, @address, @number)',
         substitutionValues: {
@@ -154,7 +193,7 @@ class Database {
     );
   }
 
-  Future<void> findThingAdd(String userid, String title, DateTime findDate, String time1, String time2, String description, String image, String address, String number ) async {
+  Future<void> findThingAdd(int userid, String title, DateTime findDate, String time1, String time2, String description, String image, String address, String number ) async {
     await conn.query(
         'INSERT INTO "Find_things" (user_id, title, find_date, time_1, time_2, description, address, number) VALUES (@user_id, @title, @find_date, @time_1, @time_2, @description, @address, @number)',
         substitutionValues: {
@@ -169,5 +208,36 @@ class Database {
           'number': number,
         } as Map<String, dynamic>
     );
+  }
+
+  Future<int?> getUserAvatarByEmail(String email) async {
+    try {
+      final results = await conn.query(
+        'SELECT avatar FROM "User_reg" WHERE email = @email',
+        substitutionValues: {
+          'email': email,
+        },
+      );
+
+      if (results.isNotEmpty) {
+        return results.first[0];
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching user ID: $e');
+      return null;
+    }
+  }
+
+  Future<void> changeAvatar(String email, int avatar) async {
+    await conn.query(
+      'UPDATE "User_reg" SET avatar = @avatar WHERE email = @email',
+      substitutionValues: {
+        'avatar': avatar,
+        'email': email,
+      },
+    );
+    print('ВСЕ ОК');
   }
 }

@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:postgres/postgres.dart';
 import '../design/colors.dart';
 import 'database.dart';
+import 'login_page.dart';
 
 class FoundPage extends StatefulWidget {
   const FoundPage({super.key});
@@ -18,7 +19,6 @@ class _FoundPageState extends State<FoundPage> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController1 = TextEditingController();
   final TextEditingController _timeController2 = TextEditingController();
-  final TextEditingController _numberController = TextEditingController();
 
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime1;
@@ -64,7 +64,6 @@ class _FoundPageState extends State<FoundPage> {
     final date = _selectedDate;
     final time1 = _selectedTime1; // Убедитесь, что это TimeOfDay
     final time2 = _selectedTime2; // Убедитесь, что это TimeOfDay
-    final number = _numberController.text;
 
     if (title.isNotEmpty &&
         address.isNotEmpty &&
@@ -86,7 +85,7 @@ class _FoundPageState extends State<FoundPage> {
       final db = Database(conn);
       await db.open();
       await db.findThingAdd(
-        '1', // Замените на актуальный user_id
+        userID as int, // Замените на актуальный user_id
         title,
         date,
         time1Interval, // Передаем строку интервала
@@ -94,7 +93,7 @@ class _FoundPageState extends State<FoundPage> {
         description,
         '', // Замените на актуальный путь к изображению, если требуется
         address,
-        number,
+        number as String,
       );
       await db.close(); // Закрываем соединение
 
@@ -248,23 +247,6 @@ class _FoundPageState extends State<FoundPage> {
               ),
             ),
             const SizedBox(height: 10),
-
-            // Поле для ввода номера телефона
-            TextField(
-              controller: _numberController,
-              decoration: const InputDecoration(
-                hintText: 'Номер телефона',
-                hintStyle: TextStyle(color: Colors.grey),
-                filled: true,
-                fillColor: whiteColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-            const SizedBox(height: 30),
-
             // Кнопка "Готово"
             Center(
               child: ElevatedButton(
