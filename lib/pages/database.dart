@@ -1,5 +1,6 @@
 import 'package:postgres/postgres.dart';
 import 'dart:async';
+import 'package:bcrypt/bcrypt.dart';
 
 class Database {
   final PostgreSQLConnection conn;
@@ -33,11 +34,12 @@ class Database {
   }
 
   Future<void> registration(String email, String password, String username, String number) async {
+    String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
     await conn.query(
         'INSERT INTO "User_reg" (email, password, username, number) VALUES (@email, @password, @username, @number)',
         substitutionValues: {
           'email': email,
-          'password': password,
+          'password': hashedPassword,
           'username': username,
           'number': number,
         } as Map<String, dynamic>
@@ -106,16 +108,19 @@ class Database {
 
   Future<int> checkUserLogin(String email, String password) async {
     final result = await conn.query(
-      'SELECT COUNT(*) FROM "User_reg" WHERE email = @email AND password = @password',
+      'SELECT password FROM "User_reg" WHERE email = @email',
       substitutionValues: {
         'email': email,
-        'password': password,
       },
     );
-    if (result.isNotEmpty && result.first[0] > 0) {
-      return 0;
-    }
 
+    if (result.isNotEmpty) {
+      final storedPasswordHash = result.first[0] as String;
+
+      if (BCrypt.checkpw(password, storedPasswordHash)) {
+        return 0;
+      }
+    }
     return 1;
   }
 
@@ -131,9 +136,8 @@ class Database {
         'time_1': row[4].toString(),
         'time_2': row[5].toString(),
         'description' : row[6],
-        'image' : row[7],
-        'address' : row[9],
-        'number' : row[10],
+        'address' : row[8],
+        'number' : row[9],
       };
     }).toList();
   }
@@ -150,9 +154,8 @@ class Database {
         'time_1': row[4].toString(),
         'time_2': row[5].toString(),
         'description' : row[6],
-        'image' : row[7],
-        'address' : row[9],
-        'number' : row[10],
+        'address' : row[8],
+        'number' : row[9],
       };
     }).toList();
   }
@@ -176,9 +179,9 @@ class Database {
     }).toList();
   }
 
-  Future<void> lostThingAdd(int userid, String title, DateTime lostDate, String time1, String time2, String description, String image, String address, String number ) async {
+  Future<void> lostThingAdd(int userid, String title, DateTime lostDate, String time1, String time2, String description, String address, String number) async {
     await conn.query(
-        'INSERT INTO "Lost_things" (user_id, title, lost_date, time_1, time_2, description, address, number) VALUES (@user_id, @title, @lost_date, @time_1, @time_2, @description, @address, @number)',
+        'INSERT INTO "Lost_things" (user_id, title, lost_date, time_1, time_2, description, address, number, image) VALUES (@user_id, @title, @lost_date, @time_1, @time_2, @description, @address, @number, @image)',
         substitutionValues: {
           'user_id': userid,
           'title': title,
@@ -186,16 +189,16 @@ class Database {
           'time_1': time1,
           'time_2': time2,
           'description': description,
-          // 'image': image,
           'address': address,
           'number': number,
+          'image': '',
         } as Map<String, dynamic>
     );
   }
 
-  Future<void> findThingAdd(int userid, String title, DateTime findDate, String time1, String time2, String description, String image, String address, String number ) async {
+  Future<void> findThingAdd(int userid, String title, DateTime findDate, String time1, String time2, String description, String address, String number ) async {
     await conn.query(
-        'INSERT INTO "Find_things" (user_id, title, find_date, time_1, time_2, description, address, number) VALUES (@user_id, @title, @find_date, @time_1, @time_2, @description, @address, @number)',
+        'INSERT INTO "Find_things" (user_id, title, find_date, time_1, time_2, description, address, number, image) VALUES (@user_id, @title, @find_date, @time_1, @time_2, @description, @address, @number, @image)',
         substitutionValues: {
           'user_id': userid,
           'title': title,
@@ -203,9 +206,9 @@ class Database {
           'time_1': time1,
           'time_2': time2,
           'description': description,
-          // 'image': image,
           'address': address,
           'number': number,
+          'image': '',
         } as Map<String, dynamic>
     );
   }

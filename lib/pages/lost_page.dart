@@ -48,10 +48,10 @@ class _LostPageState extends State<LostPage> {
       setState(() {
         if (timeIndex == 1) {
           _selectedTime1 = picked;
-          _timeController1.text = picked.format(context); // Используйте TimeOfDay.format()
+          _timeController1.text = picked.format(context);
         } else {
           _selectedTime2 = picked;
-          _timeController2.text = picked.format(context); // Используйте TimeOfDay.format()
+          _timeController2.text = picked.format(context);
         }
       });
     }
@@ -90,23 +90,36 @@ class _LostPageState extends State<LostPage> {
         time1Interval,
         time2Interval,
         description,
-        '',
         address,
         number as String,
       );
       await db.close();
 
-      // Оповещаем пользователя об успешном сохранении
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Объявление сохранено')),
+        const SnackBar(content: Text('Объявление сохранено',
+          style: TextStyle(
+            fontSize: 20,
+            color: whiteColor,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+          backgroundColor: greenColor,
+        ),
       );
-
-      // Возвращаемся на предыдущую страницу
       Navigator.pop(context);
+
     } else {
-      // Оповещаем пользователя о том, что нужно заполнить все поля
+      FocusScope.of(context).unfocus();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Пожалуйста, заполните все поля')),
+        const SnackBar(content: Text('Пожалуйста, заполните все поля',
+          style: TextStyle(
+            fontSize: 20,
+            color: whiteColor,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+          backgroundColor: redColor,
+        ),
       );
     }
   }
@@ -247,7 +260,6 @@ class _LostPageState extends State<LostPage> {
             ),
             const SizedBox(height: 10),
 
-            // Кнопка "Готово"
             Center(
               child: ElevatedButton(
                 onPressed: _saveData,
@@ -270,6 +282,7 @@ class _LostPageState extends State<LostPage> {
                 ),
               ),
             ),
+            const SizedBox(height: 50),
           ],
         ),
       ),

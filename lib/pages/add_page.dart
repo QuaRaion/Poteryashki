@@ -11,24 +11,25 @@ class AddPage extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Spacer(),
             const Padding(
-              padding: EdgeInsets.only(top: 80),
+              padding: EdgeInsets.only(top: 10),
               child: Text(
                 "Создать\nобъявление",
                 style: TextStyle(
-                  fontSize: 38,
+                  fontSize: 30,
                   color: blackColor,
-                  fontWeight: FontWeight.w900,
-                  height: 1.3,
+                  fontWeight: FontWeight.w700,
+                  height: 1,
                 ),
                 textAlign: TextAlign.center,
               ),
             ),
-            const SizedBox(height: 120),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Открытие страницы для "Потерял"
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const LostPage()),
@@ -55,7 +56,6 @@ class AddPage extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Открытие страницы для "Нашел"
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const FoundPage()),
@@ -79,6 +79,7 @@ class AddPage extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 30),
           ],
         ),
       ),

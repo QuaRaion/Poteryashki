@@ -85,29 +85,42 @@ class _FoundPageState extends State<FoundPage> {
       final db = Database(conn);
       await db.open();
       await db.findThingAdd(
-        userID as int, // Замените на актуальный user_id
+        userID as int,
         title,
         date,
-        time1Interval, // Передаем строку интервала
-        time2Interval, // Передаем строку интервала
+        time1Interval,
+        time2Interval,
         description,
-        '', // Замените на актуальный путь к изображению, если требуется
         address,
         number as String,
       );
-      await db.close(); // Закрываем соединение
+      await db.close();
 
-      // Оповещаем пользователя об успешном сохранении
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Объявление сохранено')),
+        const SnackBar(content: Text('Объявление сохранено',
+          style: TextStyle(
+            fontSize: 20,
+            color: whiteColor,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+          backgroundColor: greenColor,
+        ),
       );
-
-      // Возвращаемся на предыдущую страницу
       Navigator.pop(context);
+
     } else {
-      // Оповещаем пользователя о том, что нужно заполнить все поля
+      FocusScope.of(context).unfocus();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Пожалуйста, заполните все поля')),
+        const SnackBar(content: Text('Пожалуйста, заполните все поля',
+          style: TextStyle(
+            fontSize: 20,
+            color: whiteColor,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+          backgroundColor: redColor,
+        ),
       );
     }
   }
@@ -270,6 +283,7 @@ class _FoundPageState extends State<FoundPage> {
                 ),
               ),
             ),
+            const SizedBox(height: 50),
           ],
         ),
       ),
