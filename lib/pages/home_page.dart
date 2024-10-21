@@ -27,11 +27,11 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _initializeDatabase() async {
     conn = PostgreSQLConnection(
-      '212.67.14.125',
-      5432,
-      'Poteryashki',
-      username: 'postgres',
-      password: 'mWy8*G*y',
+        '123.45.67.890',
+        5432,
+        'Poteryashki',
+        username: '***',
+        password: '***',
     );
 
     db = Database(conn);

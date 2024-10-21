@@ -13,11 +13,10 @@ class _ChatPageState extends State<ChatPage> {
     {'id': '1', 'name': 'Иван Иванов', 'icon': Icons.person},
     {'id': '2', 'name': 'Мария Петрова', 'icon': Icons.person},
     {'id': '3', 'name': 'Александр Смирнов', 'icon': Icons.person},
-    {'id': '4', 'name': 'Иван Иванов', 'icon': Icons.person},
-    {'id': '5', 'name': 'Иван Иванов', 'icon': Icons.person},
-    {'id': '6', 'name': 'Иван Иванов', 'icon': Icons.person},
-    {'id': '7', 'name': 'Иван Иванов', 'icon': Icons.person},
-    {'id': '8', 'name': 'Иван Иванов', 'icon': Icons.person},
+    {'id': '4', 'name': 'Артур Николаев', 'icon': Icons.person},
+    {'id': '5', 'name': 'Андрей Маслов', 'icon': Icons.person},
+    {'id': '6', 'name': 'Влад Ковалев', 'icon': Icons.person},
+    {'id': '7', 'name': 'Артем Егоров', 'icon': Icons.person},
   ];
 
   List<Map<String, dynamic>> filteredChats = [];
@@ -56,10 +55,18 @@ class _ChatPageState extends State<ChatPage> {
             child: Column(
               children: <Widget>[
                 const Text(
+                  "Скоро будут доступны...",
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: blackColor,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const Text(
                   "Чаты",
                   style: TextStyle(
                     fontSize: 38,
-                    color: blackColor,
+                    color: greyColor,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -124,7 +131,7 @@ class _ChatPageState extends State<ChatPage> {
                                 : 'Неизвестный',
                             style: const TextStyle(
                               fontSize: 20,
-                              color: blackColor,
+                              color: greyColor,
                               fontWeight: FontWeight.w500,
                             ),
                           ),

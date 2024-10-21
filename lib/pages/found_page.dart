@@ -76,11 +76,11 @@ class _FoundPageState extends State<FoundPage> {
       final time2Interval = '${time2.hour}:${time2.minute}:00';
 
       final conn = PostgreSQLConnection(
-        '212.67.14.125',
+        '123.45.67.890',
         5432,
         'Poteryashki',
-        username: 'postgres',
-        password: 'mWy8*G*y',
+        username: '***',
+        password: '***',
       );
       final db = Database(conn);
       await db.open();

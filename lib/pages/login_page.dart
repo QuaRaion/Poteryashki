@@ -75,11 +75,11 @@ class _LoginPageState extends State<LoginPage> {
                         FocusScope.of(context).unfocus();
 
                         final conn = PostgreSQLConnection(
-                            '212.67.14.125',
-                            5432,
-                            'Poteryashki',
-                            username: 'postgres',
-                            password: 'mWy8*G*y'
+                          '123.45.67.890',
+                          5432,
+                          'Poteryashki',
+                          username: '***',
+                          password: '***',
                         );
                         final db = Database(conn);
                         await db.open();
@@ -89,12 +89,6 @@ class _LoginPageState extends State<LoginPage> {
 
                         int isValidUser = await db.checkUserLogin(email, password);
 
-                        // Navigator.pushReplacement(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => const Navigation(),
-                        //   ),
-                        // );
                         if (isValidUser == 0) {
 
                           userID = await db.getUserIdByEmail(email);
@@ -177,35 +171,35 @@ class _LoginPageState extends State<LoginPage> {
                     const Padding(
                       padding: EdgeInsets.only(bottom: 10),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        const Text(
-                          "Забыли пароль? ",
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 18,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const NewPasswordPage()),
-                            );
-                          },
-                          child: const Text(
-                            "Восстановить",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18,
-                              color: blackColor,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: <Widget>[
+                    //     const Text(
+                    //       "Забыли пароль? ",
+                    //       style: TextStyle(
+                    //         color: Colors.grey,
+                    //         fontSize: 18,
+                    //       ),
+                    //     ),
+                    //     GestureDetector(
+                    //       onTap: () {
+                    //         Navigator.push(
+                    //           context,
+                    //           MaterialPageRoute(
+                    //               builder: (context) => const NewPasswordPage()),
+                    //         );
+                    //       },
+                    //       child: const Text(
+                    //         "Восстановить",
+                    //         style: TextStyle(
+                    //           fontWeight: FontWeight.w500,
+                    //           fontSize: 18,
+                    //           color: blackColor,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                     const Padding(
                       padding: EdgeInsets.only(bottom: 50),
                     ),

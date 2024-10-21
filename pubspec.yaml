@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.0.2+1
 
 environment:
   sdk: '>=3.3.3 <4.0.0'
@@ -42,7 +42,7 @@ dependencies:
   intl: ^0.19.0
   flutter_exit_app: ^1.1.3
   postgres: ^2.5.0
-  url_launcher: ^6.0.9
+  url_launcher: ^6.1.7
   bcrypt: ^1.1.3
   image_picker: ^1.1.2
 
@@ -62,18 +62,18 @@ dev_dependencies:
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 flutter_native_splash:
-  image: assets/img/logo.png
-  color: "#5A78FA"
-  image_dark: assets/img/logo.png
-  color_dark: "#5A78FA"
+  image: assets/img/app_logo.png
+  color: "#1FBDD6"
+  image_dark: assets/img/app_logo.png
+  color_dark: "#1FBDD6"
 # The following section is specific to Flutter packages.
 
 flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/img/app_logo.png"
-  adaptive_icon_background: "#1FBDD6FF" # Фон для адаптивной иконки
-  adaptive_icon_foreground: "assets/img/app_logo.png" # Ваш логотип
+  adaptive_icon_background: "#1FBDD6"
+  adaptive_icon_foreground: "assets/img/app_logo.png"
   remove_alpha_ios: true
 
 flutter:

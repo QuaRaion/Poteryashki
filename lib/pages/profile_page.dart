@@ -125,23 +125,23 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   child: Column(
                     children: [
-                      _buildButton(
-                        context,
-                        icon: Icons.search,
-                        label: 'Потерянные вещи',
-                        onPressed: () {
-                          print('Нажата кнопка для перехода к потерянным вещам');
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      _buildButton(
-                        context,
-                        icon: Icons.playlist_add_check_outlined,
-                        label: 'Найденные вещи',
-                        onPressed: () {
-                          print('Нажата кнопка для перехода к найденным вещам');
-                        },
-                      ),
+                      // _buildButton(
+                      //   context,
+                      //   icon: Icons.search,
+                      //   label: 'Потерянные вещи',
+                      //   onPressed: () {
+                      //     print('Нажата кнопка для перехода к потерянным вещам');
+                      //   },
+                      // ),
+                      // const SizedBox(height: 10),
+                      // _buildButton(
+                      //   context,
+                      //   icon: Icons.playlist_add_check_outlined,
+                      //   label: 'Найденные вещи',
+                      //   onPressed: () {
+                      //     print('Нажата кнопка для перехода к найденным вещам');
+                      //   },
+                      // ),
                       const SizedBox(height: 10),
                       _buildButton(
                         context,
